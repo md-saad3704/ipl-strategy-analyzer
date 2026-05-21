@@ -2,17 +2,18 @@
 __pycache__/
 *.pyc
 
-# Processed datasets
+# Datasets
+backend/data/
 backend/processed/
 
-# Node modules
+# Frontend
 frontend/node_modules/
 
-# Environment files
+# Env
 .env
 
 # VS Code
 .vscode/
 
 # Mac
-.DS_Store
+.DS_Store1

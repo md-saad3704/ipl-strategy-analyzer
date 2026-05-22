@@ -3,151 +3,173 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  CartesianGrid,
-  Legend
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    Tooltip,
+    ResponsiveContainer,
+    PieChart,
+    Pie,
+    Cell,
+    CartesianGrid,
+    Legend
 } from "recharts";
 
 import { motion } from "framer-motion";
 
 import {
-  Trophy,
-  ShieldCheck,
-  Flame,
-  Activity,
-  BrainCircuit,
-  Radar,
-  Target,
-  TrendingUp
+    Trophy,
+    ShieldCheck,
+    Flame,
+    Activity,
+    BrainCircuit,
+    Radar,
+    Target,
+    TrendingUp
 } from "lucide-react";
 
 const COLORS = [
-  "#D4AF37",
-  "#22C55E",
-  "#EF4444",
-  "#3B82F6",
-  "#8B5CF6"
+    "#D4AF37",
+    "#22C55E",
+    "#EF4444",
+    "#3B82F6",
+    "#8B5CF6"
 ];
 
 function Dashboard() {
 
-  const [metrics, setMetrics] =
-    useState(null);
+    const [metrics, setMetrics] =
+        useState(null);
 
-  const [pressureData, setPressureData] =
-    useState([]);
+    const [pressureData, setPressureData] =
+        useState([]);
 
-  const [strategyData, setStrategyData] =
-    useState([]);
+    const [strategyData, setStrategyData] =
+        useState([]);
 
-  const [timelineData, setTimelineData] =
-    useState([]);
+    const [timelineData, setTimelineData] =
+        useState([]);
 
-  // =====================================================
-  // FETCH DATA
-  // =====================================================
+    const [captainData, setCaptainData] =
+        useState([]);
+    // =====================================================
+    // FETCH DATA
+    // =====================================================
 
-  useEffect(() => {
+    useEffect(() => {
 
-    fetchMetrics();
+        fetchMetrics();
 
-    fetchPressureAnalysis();
+        fetchPressureAnalysis();
 
-    fetchStrategyAnalysis();
+        fetchStrategyAnalysis();
 
-    fetchTimeline();
+        fetchTimeline();
+        fetchCaptainComparison();
 
-  }, []);
+    }, []);
 
-  // =====================================================
-  // API CALLS
-  // =====================================================
+    // =====================================================
+    // API CALLS
+    // =====================================================
 
-  const fetchMetrics = async () => {
+    const fetchMetrics = async () => {
 
-    try {
+        try {
 
-      const response = await axios.get(
-        "http://127.0.0.1:5000/api/success-metrics"
-      );
+            const response = await axios.get(
+                "http://127.0.0.1:5000/api/success-metrics"
+            );
 
-      setMetrics(response.data);
+            setMetrics(response.data);
 
-    } catch (error) {
+        } catch (error) {
 
-      console.error(error);
-    }
-  };
+            console.error(error);
+        }
+    };
 
-  const fetchPressureAnalysis =
-    async () => {
+    const fetchPressureAnalysis =
+        async () => {
 
-    try {
+            try {
 
-      const response = await axios.get(
-        "http://127.0.0.1:5000/api/pressure-analysis"
-      );
+                const response = await axios.get(
+                    "http://127.0.0.1:5000/api/pressure-analysis"
+                );
 
-      setPressureData(response.data);
+                setPressureData(response.data);
 
-    } catch (error) {
+            } catch (error) {
 
-      console.error(error);
-    }
-  };
+                console.error(error);
+            }
+        };
 
-  const fetchStrategyAnalysis =
-    async () => {
+    const fetchStrategyAnalysis =
+        async () => {
 
-    try {
+            try {
 
-      const response = await axios.get(
-        "http://127.0.0.1:5000/api/strategy-analysis"
-      );
+                const response = await axios.get(
+                    "http://127.0.0.1:5000/api/strategy-analysis"
+                );
 
-      setStrategyData(response.data);
+                setStrategyData(response.data);
 
-    } catch (error) {
+            } catch (error) {
 
-      console.error(error);
-    }
-  };
+                console.error(error);
+            }
+        };
 
-  const fetchTimeline =
-    async () => {
+    const fetchTimeline =
+        async () => {
 
-    try {
+            try {
 
-      const response = await axios.get(
-        "http://127.0.0.1:5000/api/timeline"
-      );
+                const response = await axios.get(
+                    "http://127.0.0.1:5000/api/timeline"
+                );
 
-      setTimelineData(
-        response.data.slice(0, 8)
-      );
+                setTimelineData(
+                    response.data.slice(0, 8)
+                );
 
-    } catch (error) {
+            } catch (error) {
 
-      console.error(error);
-    }
-  };
+                console.error(error);
+            }
+        };
 
-  // =====================================================
-  // UI
-  // =====================================================
 
-  return (
+    const fetchCaptainComparison =
+        async () => {
 
-    <div
-      className="
+            try {
+
+                const response = await axios.get(
+                    "http://127.0.0.1:5000/api/captain-comparison"
+                );
+
+                setCaptainData(response.data);
+
+            } catch (error) {
+
+                console.error(error);
+            }
+        };
+
+
+    // =====================================================
+    // UI
+    // =====================================================
+
+    return (
+
+        <div
+            className="
         min-h-screen
         bg-gradient-to-br
         from-[#03140F]
@@ -156,29 +178,29 @@ function Dashboard() {
         text-white
         p-6
       "
-    >
+        >
 
-      {/* ============================================= */}
-      {/* HEADER */}
-      {/* ============================================= */}
+            {/* ============================================= */}
+            {/* HEADER */}
+            {/* ============================================= */}
 
-      <motion.div
+            <motion.div
 
-        initial={{
-          opacity: 0,
-          y: -50
-        }}
+                initial={{
+                    opacity: 0,
+                    y: -50
+                }}
 
-        animate={{
-          opacity: 1,
-          y: 0
-        }}
+                animate={{
+                    opacity: 1,
+                    y: 0
+                }}
 
-        transition={{
-          duration: 0.8
-        }}
+                transition={{
+                    duration: 0.8
+                }}
 
-        className="
+                className="
           flex
           flex-col
           lg:flex-row
@@ -187,12 +209,12 @@ function Dashboard() {
           lg:items-center
           gap-6
         "
-      >
+            >
 
-        <div>
+                <div>
 
-          <h1
-            className="
+                    <h1
+                        className="
               text-6xl
               font-extrabold
               bg-gradient-to-r
@@ -201,32 +223,32 @@ function Dashboard() {
               bg-clip-text
               text-transparent
             "
-          >
+                    >
 
-            IPL Strategy Analyzer
+                        IPL Strategy Analyzer
 
-          </h1>
+                    </h1>
 
-          <p
-            className="
+                    <p
+                        className="
               text-green-100
               mt-4
               text-xl
               max-w-3xl
             "
-          >
+                    >
 
-            AI-powered tactical intelligence system
-            analyzing captaincy behavior, pressure
-            handling, bowling reactions, and
-            strategic momentum shifts in IPL matches.
+                        AI-powered tactical intelligence system
+                        analyzing captaincy behavior, pressure
+                        handling, bowling reactions, and
+                        strategic momentum shifts in IPL matches.
 
-          </p>
+                    </p>
 
-        </div>
+                </div>
 
-        <div
-          className="
+                <div
+                    className="
             bg-gradient-to-r
             from-yellow-400
             to-yellow-600
@@ -238,23 +260,23 @@ function Dashboard() {
             shadow-2xl
             text-lg
           "
-        >
+                >
 
-          LIVE MATCH INTELLIGENCE
+                    LIVE MATCH INTELLIGENCE
 
-        </div>
+                </div>
 
-      </motion.div>
+            </motion.div>
 
-      {/* ============================================= */}
-      {/* METRIC CARDS */}
-      {/* ============================================= */}
+            {/* ============================================= */}
+            {/* METRIC CARDS */}
+            {/* ============================================= */}
 
-      {
-        metrics && (
+            {
+                metrics && (
 
-          <div
-            className="
+                    <div
+                        className="
               grid
               grid-cols-1
               md:grid-cols-2
@@ -262,198 +284,295 @@ function Dashboard() {
               gap-8
               mt-12
             "
-          >
+                    >
 
-            <MetricCard
-              title="Total Tactical Decisions"
-              value={metrics.total_decisions}
-              icon={<Trophy size={32} />}
-              subtitle="All detected captain decisions"
-            />
+                        <MetricCard
+                            title="Total Tactical Decisions"
+                            value={metrics.total_decisions}
+                            icon={<Trophy size={32} />}
+                            subtitle="All detected captain decisions"
+                        />
 
-            <MetricCard
-              title="Tactical Success Rate"
-              value={`${metrics.success_rate}%`}
-              icon={<ShieldCheck size={32} />}
-              subtitle="Successful tactical outcomes"
-            />
+                        <MetricCard
+                            title="Tactical Success Rate"
+                            value={`${metrics.success_rate}%`}
+                            icon={<ShieldCheck size={32} />}
+                            subtitle="Successful tactical outcomes"
+                        />
 
-            <MetricCard
-              title="Successful Decisions"
-              value={metrics.successful_decisions}
-              icon={<TrendingUp size={32} />}
-              subtitle="Positive captaincy responses"
-            />
+                        <MetricCard
+                            title="Successful Decisions"
+                            value={metrics.successful_decisions}
+                            icon={<TrendingUp size={32} />}
+                            subtitle="Positive captaincy responses"
+                        />
 
-            <MetricCard
-              title="Aggression Index"
-              value={metrics.average_aggression}
-              icon={<Flame size={32} />}
-              subtitle="Captain tactical aggression"
-            />
+                        <MetricCard
+                            title="Aggression Index"
+                            value={metrics.average_aggression}
+                            icon={<Flame size={32} />}
+                            subtitle="Captain tactical aggression"
+                        />
 
-          </div>
-        )
-      }
+                    </div>
+                )
+            }
 
-      {/* ============================================= */}
-      {/* INSIGHT PANELS */}
-      {/* ============================================= */}
+            {/* ============================================= */}
+            {/* INSIGHT PANELS */}
+            {/* ============================================= */}
 
-      <div
-        className="
+            <div
+                className="
           grid
           grid-cols-1
           xl:grid-cols-3
           gap-8
           mt-14
         "
-      >
+            >
 
-        <InsightCard
-          title="Pressure Intelligence"
-          icon={<Radar />}
-          text="
+                <InsightCard
+                    title="Pressure Intelligence"
+                    icon={<Radar />}
+                    text="
           Detects batting collapses, death-over
           pressure, powerplay wickets, and
           momentum swings automatically.
           "
-        />
+                />
 
-        <InsightCard
-          title="Captain Strategy Engine"
-          icon={<BrainCircuit />}
-          text="
+                <InsightCard
+                    title="Captain Strategy Engine"
+                    icon={<BrainCircuit />}
+                    text="
           Evaluates tactical bowling changes,
           aggressive continuations, and strategic
           pressure responses.
           "
-        />
+                />
 
-        <InsightCard
-          title="Outcome Evaluation"
-          icon={<Target />}
-          text="
+                <InsightCard
+                    title="Outcome Evaluation"
+                    icon={<Target />}
+                    text="
           Measures whether captain decisions
           reduced runs, took wickets, or shifted
           momentum successfully.
           "
-        />
+                />
 
-      </div>
+            </div>
 
-      {/* ============================================= */}
-      {/* CHARTS */}
-      {/* ============================================= */}
+            {/* ============================================= */}
+            {/* CHARTS */}
+            {/* ============================================= */}
 
-      <div
-        className="
+            <div
+                className="
           grid
           grid-cols-1
           xl:grid-cols-2
           gap-10
           mt-14
         "
-      >
+            >
 
-        {/* Pressure Chart */}
+                {/* Pressure Chart */}
 
-        <ChartContainer
-          title="Pressure Moments Distribution"
-        >
+                <ChartContainer
+                    title="Pressure Moments Distribution"
+                >
 
-          <ResponsiveContainer
-            width="100%"
-            height={400}
-          >
+                    <ResponsiveContainer
+                        width="100%"
+                        height={400}
+                    >
 
-            <BarChart data={pressureData}>
+                        <BarChart data={pressureData}>
 
-              <CartesianGrid
-                strokeDasharray="3 3"
-                stroke="#1F2937"
-              />
+                            <CartesianGrid
+                                strokeDasharray="3 3"
+                                stroke="#1F2937"
+                            />
 
-              <XAxis
-                dataKey="pressure_type"
-                stroke="#E5E7EB"
-              />
+                            <XAxis
+                                dataKey="pressure_type"
+                                stroke="#E5E7EB"
+                            />
 
-              <YAxis stroke="#E5E7EB" />
+                            <YAxis stroke="#E5E7EB" />
 
-              <Tooltip />
+                            <Tooltip />
 
-              <Bar
-                dataKey="count"
-                radius={[10, 10, 0, 0]}
-                fill="#22C55E"
-              />
+                            <Bar
+                                dataKey="count"
+                                radius={[10, 10, 0, 0]}
+                                fill="#22C55E"
+                            />
 
-            </BarChart>
+                        </BarChart>
 
-          </ResponsiveContainer>
+                    </ResponsiveContainer>
 
-        </ChartContainer>
+                </ChartContainer>
 
-        {/* Strategy Pie */}
+                {/* Strategy Pie */}
 
-        <ChartContainer
-          title="Strategic Decision Breakdown"
-        >
+                <ChartContainer
+                    title="Strategic Decision Breakdown"
+                >
 
-          <ResponsiveContainer
-            width="100%"
-            height={400}
-          >
+                    <ResponsiveContainer
+                        width="100%"
+                        height={400}
+                    >
 
-            <PieChart>
+                        <PieChart>
 
-              <Pie
-                data={strategyData}
-                dataKey="count"
-                nameKey="strategic_decision"
-                outerRadius={140}
-                innerRadius={70}
-                paddingAngle={4}
-                label
-              >
+                            <Pie
+                                data={strategyData}
+                                dataKey="count"
+                                nameKey="strategic_decision"
+                                outerRadius={140}
+                                innerRadius={70}
+                                paddingAngle={4}
+                                label
+                            >
 
-                {
-                  strategyData.map(
-                    (entry, index) => (
+                                {
+                                    strategyData.map(
+                                        (entry, index) => (
 
-                      <Cell
-                        key={index}
-                        fill={
-                          COLORS[
-                            index % COLORS.length
-                          ]
-                        }
-                      />
-                    )
-                  )
-                }
+                                            <Cell
+                                                key={index}
+                                                fill={
+                                                    COLORS[
+                                                    index % COLORS.length
+                                                    ]
+                                                }
+                                            />
+                                        )
+                                    )
+                                }
 
-              </Pie>
+                            </Pie>
 
-              <Tooltip />
+                            <Tooltip />
 
-              <Legend />
+                            <Legend />
 
-            </PieChart>
+                        </PieChart>
 
-          </ResponsiveContainer>
+                    </ResponsiveContainer>
 
-        </ChartContainer>
+                </ChartContainer>
 
-      </div>
+            </div>
 
-      {/* ============================================= */}
-      {/* TIMELINE TABLE */}
-      {/* ============================================= */}
+            {/* ============================================= */}
+            {/* TIMELINE TABLE */}
+            {/* ============================================= */}
 
-      <div
-        className="
+
+
+            {/* ============================================= */}
+            {/* CAPTAIN COMPARISON */}
+            {/* ============================================= */}
+
+            <div
+                className="
+    mt-14
+    bg-white/5
+    backdrop-blur-lg
+    border
+    border-green-900
+    rounded-3xl
+    p-8
+    shadow-2xl
+  "
+            >
+
+                <div
+                    className="
+      flex
+      justify-between
+      items-center
+      mb-8
+    "
+                >
+
+                    <h2
+                        className="
+        text-3xl
+        font-bold
+        text-yellow-400
+      "
+                    >
+
+                        Captain Tactical Comparison
+
+                    </h2>
+
+                    <div
+                        className="
+        text-sm
+        text-green-200
+      "
+                    >
+
+                        Tactical Intelligence Rankings
+
+                    </div>
+
+                </div>
+
+                <ResponsiveContainer
+                    width="100%"
+                    height={420}
+                >
+
+                    <BarChart
+                        data={captainData}
+                    >
+
+                        <CartesianGrid
+                            strokeDasharray="3 3"
+                            stroke="#1F2937"
+                        />
+
+                        <XAxis
+                            dataKey="captain"
+                            stroke="#E5E7EB"
+                        />
+
+                        <YAxis
+                            stroke="#E5E7EB"
+                        />
+
+                        <Tooltip />
+
+                        <Legend />
+
+                        <Bar
+                            dataKey="success_rate"
+                            fill="#22C55E"
+                            radius={[8, 8, 0, 0]}
+                        />
+
+                        <Bar
+                            dataKey="aggression"
+                            fill="#D4AF37"
+                            radius={[8, 8, 0, 0]}
+                        />
+
+                    </BarChart>
+
+                </ResponsiveContainer>
+
+            </div>
+            <div
+                className="
           mt-14
           bg-white/5
           backdrop-blur-lg
@@ -463,141 +582,140 @@ function Dashboard() {
           p-8
           shadow-2xl
         "
-      >
+            >
 
-        <h2
-          className="
+                <h2
+                    className="
             text-3xl
             font-bold
             text-yellow-400
             mb-8
           "
-        >
+                >
 
-          Tactical Timeline Events
+                    Tactical Timeline Events
 
-        </h2>
+                </h2>
 
-        <div className="overflow-x-auto">
+                <div className="overflow-x-auto">
 
-          <table
-            className="
+                    <table
+                        className="
               w-full
               border-collapse
             "
-          >
+                    >
 
-            <thead>
+                        <thead>
 
-              <tr
-                className="
+                            <tr
+                                className="
                   text-left
                   border-b
                   border-green-800
                 "
-              >
+                            >
 
-                <th className="pb-4">
-                  Match
-                </th>
+                                <th className="pb-4">
+                                    Match
+                                </th>
 
-                <th className="pb-4">
-                  Over
-                </th>
+                                <th className="pb-4">
+                                    Over
+                                </th>
 
-                <th className="pb-4">
-                  Pressure Type
-                </th>
+                                <th className="pb-4">
+                                    Pressure Type
+                                </th>
 
-                <th className="pb-4">
-                  Strategy
-                </th>
+                                <th className="pb-4">
+                                    Strategy
+                                </th>
 
-                <th className="pb-4">
-                  Outcome
-                </th>
+                                <th className="pb-4">
+                                    Outcome
+                                </th>
 
-              </tr>
+                            </tr>
 
-            </thead>
+                        </thead>
 
-            <tbody>
+                        <tbody>
 
-              {
-                timelineData.map(
-                  (event, index) => (
+                            {
+                                timelineData.map(
+                                    (event, index) => (
 
-                    <tr
-                      key={index}
-                      className="
+                                        <tr
+                                            key={index}
+                                            className="
                         border-b
                         border-green-950
                         hover:bg-green-950/30
                       "
-                    >
+                                        >
 
-                      <td className="py-4">
-                        {event.match_id}
-                      </td>
+                                            <td className="py-4">
+                                                {event.match_id}
+                                            </td>
 
-                      <td>
-                        {event.over}.{event.ball}
-                      </td>
+                                            <td>
+                                                {event.over}.{event.ball}
+                                            </td>
 
-                      <td>
-                        {event.pressure_type}
-                      </td>
+                                            <td>
+                                                {event.pressure_type}
+                                            </td>
 
-                      <td>
-                        {
-                          event.strategic_decision
-                        }
-                      </td>
+                                            <td>
+                                                {
+                                                    event.strategic_decision
+                                                }
+                                            </td>
 
-                      <td>
+                                            <td>
 
-                        <span
-                          className={`
+                                                <span
+                                                    className={`
                             px-3
                             py-1
                             rounded-full
                             text-sm
                             font-bold
 
-                            ${
-                              event.decision_success
-                              === "Successful"
+                            ${event.decision_success
+                                                            === "Successful"
 
-                              ? "bg-green-600"
+                                                            ? "bg-green-600"
 
-                              : "bg-red-600"
-                            }
+                                                            : "bg-red-600"
+                                                        }
                           `}
-                        >
+                                                >
 
-                          {
-                            event.decision_success
-                          }
+                                                    {
+                                                        event.decision_success
+                                                    }
 
-                        </span>
+                                                </span>
 
-                      </td>
+                                            </td>
 
-                    </tr>
-                  )
-                )
-              }
+                                        </tr>
+                                    )
+                                )
+                            }
 
-            </tbody>
+                        </tbody>
 
-          </table>
+                    </table>
+
+                </div>
+
+            </div>
 
         </div>
-
-      </div>
-
-    </div>
-  );
+    );
 }
 
 export default Dashboard;
@@ -608,22 +726,22 @@ export default Dashboard;
 // =======================================================
 
 function MetricCard({
-  title,
-  value,
-  subtitle,
-  icon
+    title,
+    value,
+    subtitle,
+    icon
 }) {
 
-  return (
+    return (
 
-    <motion.div
+        <motion.div
 
-      whileHover={{
-        scale: 1.04,
-        y: -5
-      }}
+            whileHover={{
+                scale: 1.04,
+                y: -5
+            }}
 
-      className="
+            className="
         bg-white/5
         backdrop-blur-lg
         border
@@ -634,10 +752,10 @@ function MetricCard({
         relative
         overflow-hidden
       "
-    >
+        >
 
-      <div
-        className="
+            <div
+                className="
           absolute
           top-0
           right-0
@@ -646,69 +764,69 @@ function MetricCard({
           bg-yellow-400/10
           blur-3xl
         "
-      />
+            />
 
-      <div
-        className="
+            <div
+                className="
           flex
           justify-between
           items-start
         "
-      >
+            >
 
-        <div>
+                <div>
 
-          <p
-            className="
+                    <p
+                        className="
               text-gray-300
               text-lg
             "
-          >
+                    >
 
-            {title}
+                        {title}
 
-          </p>
+                    </p>
 
-          <h2
-            className="
+                    <h2
+                        className="
               text-5xl
               font-extrabold
               mt-4
               text-yellow-400
             "
-          >
+                    >
 
-            {value}
+                        {value}
 
-          </h2>
+                    </h2>
 
-          <p
-            className="
+                    <p
+                        className="
               text-gray-400
               mt-4
             "
-          >
+                    >
 
-            {subtitle}
+                        {subtitle}
 
-          </p>
+                    </p>
 
-        </div>
+                </div>
 
-        <div
-          className="
+                <div
+                    className="
             text-yellow-400
           "
-        >
+                >
 
-          {icon}
+                    {icon}
 
-        </div>
+                </div>
 
-      </div>
+            </div>
 
-    </motion.div>
-  );
+        </motion.div>
+    );
 }
 
 
@@ -717,20 +835,20 @@ function MetricCard({
 // =======================================================
 
 function InsightCard({
-  title,
-  text,
-  icon
+    title,
+    text,
+    icon
 }) {
 
-  return (
+    return (
 
-    <motion.div
+        <motion.div
 
-      whileHover={{
-        scale: 1.03
-      }}
+            whileHover={{
+                scale: 1.03
+            }}
 
-      className="
+            className="
         bg-white/5
         backdrop-blur-lg
         border
@@ -739,44 +857,44 @@ function InsightCard({
         p-8
         shadow-2xl
       "
-    >
+        >
 
-      <div
-        className="
+            <div
+                className="
           text-yellow-400
           mb-4
         "
-      >
+            >
 
-        {icon}
+                {icon}
 
-      </div>
+            </div>
 
-      <h2
-        className="
+            <h2
+                className="
           text-2xl
           font-bold
           mb-4
         "
-      >
+            >
 
-        {title}
+                {title}
 
-      </h2>
+            </h2>
 
-      <p
-        className="
+            <p
+                className="
           text-gray-300
           leading-8
         "
-      >
+            >
 
-        {text}
+                {text}
 
-      </p>
+            </p>
 
-    </motion.div>
-  );
+        </motion.div>
+    );
 }
 
 
@@ -785,25 +903,25 @@ function InsightCard({
 // =======================================================
 
 function ChartContainer({
-  title,
-  children
+    title,
+    children
 }) {
 
-  return (
+    return (
 
-    <motion.div
+        <motion.div
 
-      initial={{
-        opacity: 0,
-        y: 30
-      }}
+            initial={{
+                opacity: 0,
+                y: 30
+            }}
 
-      animate={{
-        opacity: 1,
-        y: 0
-      }}
+            animate={{
+                opacity: 1,
+                y: 0
+            }}
 
-      className="
+            className="
         bg-white/5
         backdrop-blur-lg
         border
@@ -812,23 +930,23 @@ function ChartContainer({
         p-8
         shadow-2xl
       "
-    >
+        >
 
-      <h2
-        className="
+            <h2
+                className="
           text-3xl
           font-bold
           text-yellow-400
           mb-8
         "
-      >
+            >
 
-        {title}
+                {title}
 
-      </h2>
+            </h2>
 
-      {children}
+            {children}
 
-    </motion.div>
-  );
+        </motion.div>
+    );
 }

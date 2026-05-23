@@ -130,7 +130,7 @@ Flask REST API
             ↓
 React Dashboard
 ```
-`
+
 ---
 
 # Data Source

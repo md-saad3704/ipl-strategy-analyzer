@@ -53,6 +53,9 @@ function Dashboard() {
 
     const [captainData, setCaptainData] =
         useState([]);
+
+    const [captains, setCaptains] =
+        useState([]);
     // =====================================================
     // FETCH DATA
     // =====================================================
@@ -67,7 +70,7 @@ function Dashboard() {
 
         fetchTimeline();
         fetchCaptainComparison();
-
+        fetchCaptains();
     }, []);
 
     // =====================================================
@@ -161,6 +164,23 @@ function Dashboard() {
             }
         };
 
+
+    const fetchCaptains =
+        async () => {
+
+            try {
+
+                const response = await axios.get(
+                    "http://127.0.0.1:5000/api/captains"
+                );
+
+                setCaptains(response.data);
+
+            } catch (error) {
+
+                console.error(error);
+            }
+        };
 
     // =====================================================
     // UI
@@ -475,6 +495,224 @@ function Dashboard() {
             {/* ============================================= */}
 
 
+
+            {/* ============================================= */}
+            {/* CAPTAIN INTELLIGENCE */}
+            {/* ============================================= */}
+
+            <div className="mt-14">
+
+                <div
+                    className="
+      flex
+      justify-between
+      items-center
+      mb-8
+    "
+                >
+
+                    <h2
+                        className="
+        text-4xl
+        font-bold
+        text-yellow-400
+      "
+                    >
+
+                        Captain Intelligence Center
+
+                    </h2>
+
+                    <div
+                        className="
+        text-green-200
+      "
+                    >
+
+                        Tactical Leadership Analytics
+
+                    </div>
+
+                </div>
+
+                <div
+                    className="
+      grid
+      grid-cols-1
+      md:grid-cols-2
+      xl:grid-cols-4
+      gap-8
+    "
+                >
+
+                    {
+                        captains.map(
+                            (captain, index) => (
+
+                                <motion.div
+
+                                    key={index}
+
+                                    whileHover={{
+                                        scale: 1.04,
+                                        y: -5
+                                    }}
+
+                                    className="
+              bg-white/5
+              backdrop-blur-lg
+              border
+              border-green-900
+              rounded-3xl
+              p-8
+              shadow-2xl
+              overflow-hidden
+              relative
+            "
+                                >
+
+                                    {/* Glow */}
+
+                                    <div
+                                        className="
+                absolute
+                top-0
+                right-0
+                w-24
+                h-24
+                bg-yellow-400/10
+                blur-3xl
+              "
+                                    />
+
+                                    {/* Captain Name */}
+
+                                    <h2
+                                        className="
+                text-2xl
+                font-bold
+                text-yellow-400
+              "
+                                    >
+
+                                        {captain.captain}
+
+                                    </h2>
+
+                                    {/* Tactical Stats */}
+
+                                    <div className="mt-6 space-y-4">
+
+                                        <CaptainStat
+                                            label="Success Rate"
+                                            value={`${captain.success_rate}%`}
+                                        />
+
+                                        <CaptainStat
+                                            label="Aggression"
+                                            value={
+                                                captain.average_aggression
+                                            }
+                                        />
+
+                                        <CaptainStat
+                                            label="Decisions"
+                                            value={
+                                                captain.total_decisions
+                                            }
+                                        />
+
+                                        <CaptainStat
+                                            label="Aggressive Moves"
+                                            value={
+                                                captain.aggressive_decisions
+                                            }
+                                        />
+
+                                        <CaptainStat
+                                            label="Defensive Moves"
+                                            value={
+                                                captain.defensive_decisions
+                                            }
+                                        />
+
+                                    </div>
+
+                                    {/* Tactical Rating */}
+
+                                    <div className="mt-8">
+
+                                        <div
+                                            className="
+                  flex
+                  justify-between
+                  mb-2
+                "
+                                        >
+
+                                            <span
+                                                className="
+                    text-sm
+                    text-gray-300
+                  "
+                                            >
+
+                                                Tactical Rating
+
+                                            </span>
+
+                                            <span
+                                                className="
+                    text-sm
+                    text-yellow-400
+                    font-bold
+                  "
+                                            >
+
+                                                {
+                                                    captain.success_rate
+                                                }/100
+
+                                            </span>
+
+                                        </div>
+
+                                        <div
+                                            className="
+                  w-full
+                  bg-green-950
+                  rounded-full
+                  h-3
+                "
+                                        >
+
+                                            <div
+
+                                                className="
+                    bg-gradient-to-r
+                    from-yellow-400
+                    to-yellow-600
+                    h-3
+                    rounded-full
+                  "
+
+                                                style={{
+                                                    width: `${captain.success_rate}%`
+                                                }}
+                                            />
+
+                                        </div>
+
+                                    </div>
+
+                                </motion.div>
+                            )
+                        )
+                    }
+
+                </div>
+
+            </div>
 
             {/* ============================================= */}
             {/* CAPTAIN COMPARISON */}
@@ -901,6 +1139,49 @@ function InsightCard({
 // =======================================================
 // CHART CONTAINER
 // =======================================================
+
+function CaptainStat({
+    label,
+    value
+}) {
+
+    return (
+
+        <div
+            className="
+        flex
+        justify-between
+        items-center
+        border-b
+        border-green-950
+        pb-2
+      "
+        >
+
+            <span
+                className="
+          text-gray-300
+        "
+            >
+
+                {label}
+
+            </span>
+
+            <span
+                className="
+          font-bold
+          text-white
+        "
+            >
+
+                {value}
+
+            </span>
+
+        </div>
+    );
+}
 
 function ChartContainer({
     title,

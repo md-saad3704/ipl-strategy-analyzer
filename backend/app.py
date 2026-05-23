@@ -203,44 +203,7 @@ def timeline_data():
     return jsonify(data)
 
 
-# =========================================================
-# CAPTAIN COMPARISON
-# =========================================================
 
-
-def captain_comparison():
-
-    # Simulated captain mapping
-    # Later we can infer from match metadata
-
-    captain_data = [
-        {
-            "captain": "MS Dhoni",
-            "success_rate": 74,
-            "aggression": 6.5,
-            "decisions": 120,
-        },
-        {
-            "captain": "Rohit Sharma",
-            "success_rate": 69,
-            "aggression": 7.8,
-            "decisions": 105,
-        },
-        {
-            "captain": "Virat Kohli",
-            "success_rate": 63,
-            "aggression": 8.6,
-            "decisions": 98,
-        },
-        {
-            "captain": "Shreyas Iyer",
-            "success_rate": 67,
-            "aggression": 7.1,
-            "decisions": 76,
-        },
-    ]
-
-    return jsonify(captain_data)
 
 
 # =========================================================

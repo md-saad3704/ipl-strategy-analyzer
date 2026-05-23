@@ -215,26 +215,25 @@ def analyze_decisions(matches_df, pressure_df):
         # Store result
         # =============================================
 
-        analyzed_rows.append({
+        decision_row = pressure.to_dict()
 
-            "match_id": match_id,
-            "innings": innings,
+        decision_row["bowler_type"] = (
+            bowler_type
+        )
 
-            "over": over,
-            "ball": ball,
+        decision_row["decision"] = (
+            bowling_decision
+        )
 
-            "pressure_type": pressure_type,
+        decision_row["strategic_decision"] = (
+            strategic_decision
+        )
 
-            "bowler": bowler,
-            "bowler_type": bowler_type,
+        decision_row["phase"] = phase
 
-            "decision": bowling_decision,
-
-            "strategic_decision":
-                strategic_decision,
-
-            "phase": phase
-        })
+        analyzed_rows.append(
+            decision_row
+        )
 
     analyzed_df = pd.DataFrame(
         analyzed_rows

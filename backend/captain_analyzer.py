@@ -8,37 +8,19 @@ import os
 
 INPUT_FILE = "processed/final_outcomes.csv"
 
-OUTPUT_FILE = (
-    "processed/captain_summary.csv"
-)
+OUTPUT_FILE = "processed/captain_summary.csv"
 
 # =========================================================
 # CAPTAIN MAPPING
 # =========================================================
 
-# Temporary tactical mapping
-# Later we will infer automatically
-# from match metadata
-
-CAPTAIN_MAPPING = {
-
-    "Chennai Super Kings":
-        "MS Dhoni",
-
-    "Mumbai Indians":
-        "Rohit Sharma",
-
-    "Royal Challengers Bangalore":
-        "Virat Kohli",
-
-    "Kolkata Knight Riders":
-        "Shreyas Iyer"
-}
+CAPTAIN_FILE = "data/ipl_captains.csv"
 
 
 # =========================================================
 # LOAD DATA
 # =========================================================
+
 
 def load_dataset():
 
@@ -50,154 +32,115 @@ def load_dataset():
 
 
 # =========================================================
-# ASSIGN CAPTAINS
+# LOAD CAPTAIN DATA
 # =========================================================
 
-def assign_captains(df):
-    """
-    Assign captains to rows.
 
-    Since captain data is not directly
-    available yet, we simulate mapping.
+def load_captain_data():
+
+    print("\nLoading IPL captain dataset...\n")
+
+    captain_df = pd.read_csv(CAPTAIN_FILE)
+
+    return captain_df
+
+
+# =========================================================
+# ASSIGN REAL CAPTAINS
+# =========================================================
+
+
+def assign_real_captains(df, captain_df):
+    """
+    Merge captain history
+    with tactical match data.
     """
 
-    # Temporary team simulation
-    teams = list(
-        CAPTAIN_MAPPING.keys()
+    print("\nAssigning real captains...\n")
+
+    # Ensure season types match
+
+    df["season"] = df["season"].astype(str)
+
+    captain_df["season"] = captain_df["season"].astype(str)
+
+    # Merge on:
+    # season + batting team
+
+    merged_df = pd.merge(
+        df,
+        captain_df,
+        left_on=["season", "batting_team"],
+        right_on=["season", "team"],
+        how="left",
     )
 
-    simulated_teams = []
+    # Cleanup
 
-    for i in range(len(df)):
+    merged_df.drop(columns=["team"], inplace=True)
 
-        simulated_teams.append(
-            teams[i % len(teams)]
-        )
+    # Remove unmatched captain rows
 
-    df["team"] = simulated_teams
+    merged_df = merged_df[merged_df["captain"].notna()]
 
-    df["captain"] = (
-        df["team"]
-        .map(CAPTAIN_MAPPING)
-    )
-
-    return df
+    return merged_df
 
 
 # =========================================================
 # GENERATE CAPTAIN METRICS
 # =========================================================
 
+
 def generate_captain_metrics(df):
 
     captain_rows = []
 
-    captains = (
-        df["captain"]
-        .unique()
-    )
+    captains = df["captain"].unique()
 
     print("\nGenerating captain metrics...\n")
 
     for captain in captains:
 
-        captain_df = df[
-            df["captain"] == captain
-        ]
+        captain_df = df[df["captain"] == captain]
 
-        total_decisions = len(
-            captain_df
+        total_decisions = len(captain_df)
+
+        successful = len(captain_df[captain_df["decision_success"] == "Successful"])
+
+        failed = len(captain_df[captain_df["decision_success"] == "Failed"])
+
+        success_rate = (
+            round((successful / total_decisions) * 100, 2) if total_decisions > 0 else 0
         )
 
-        successful = len(
-
-            captain_df[
-                captain_df[
-                    "decision_success"
-                ] == "Successful"
-            ]
-        )
-
-        failed = len(
-
-            captain_df[
-                captain_df[
-                    "decision_success"
-                ] == "Failed"
-            ]
-        )
-
-        success_rate = round(
-
-            (
-                successful /
-                total_decisions
-            ) * 100,
-
-            2
-
-        ) if total_decisions > 0 else 0
-
-        avg_aggression = round(
-
-            captain_df[
-                "aggression_index"
-            ].mean(),
-
-            2
-        )
+        avg_aggression = round(captain_df["aggression_index"].mean(), 2)
 
         aggressive_count = len(
-
             captain_df[
-                captain_df[
-                    "strategic_decision"
-                ] == (
-                    "Aggressive Continuation"
-                )
+                captain_df["strategic_decision"].str.contains("Aggressive", na=False)
             ]
         )
 
         defensive_count = len(
-
             captain_df[
-                captain_df[
-                    "strategic_decision"
-                ] == (
-                    "Defensive Bowling Change"
-                )
+                captain_df["strategic_decision"].str.contains("Defensive", na=False)
             ]
         )
 
-        captain_rows.append({
+        captain_rows.append(
+            {
+                "captain": captain,
+                "total_decisions": total_decisions,
+                "successful_decisions": successful,
+                "failed_decisions": failed,
+                "success_rate": success_rate,
+                "average_aggression": avg_aggression,
+                "aggressive_decisions": aggressive_count,
+                "defensive_decisions": defensive_count,
+            }
+        )
 
-            "captain": captain,
-
-            "total_decisions":
-                total_decisions,
-
-            "successful_decisions":
-                successful,
-
-            "failed_decisions":
-                failed,
-
-            "success_rate":
-                success_rate,
-
-            "average_aggression":
-                avg_aggression,
-
-            "aggressive_decisions":
-                aggressive_count,
-
-            "defensive_decisions":
-                defensive_count
-        })
-
-    captain_df = pd.DataFrame(
-        captain_rows
-    )
+    captain_df = pd.DataFrame(captain_rows)
 
     return captain_df
 
@@ -206,17 +149,12 @@ def generate_captain_metrics(df):
 # SAVE RESULTS
 # =========================================================
 
+
 def save_results(df):
 
-    os.makedirs(
-        "processed",
-        exist_ok=True
-    )
+    os.makedirs("processed", exist_ok=True)
 
-    df.to_csv(
-        OUTPUT_FILE,
-        index=False
-    )
+    df.to_csv(OUTPUT_FILE, index=False)
 
     print("\nCaptain summary saved to:")
     print(OUTPUT_FILE)
@@ -226,6 +164,7 @@ def save_results(df):
 # MAIN
 # =========================================================
 
+
 def main():
 
     print("\n===================================")
@@ -234,20 +173,22 @@ def main():
 
     df = load_dataset()
 
-    df = assign_captains(df)
+    captain_lookup_df = load_captain_data()
 
-    captain_df = (
-        generate_captain_metrics(df)
-    )
+    df = assign_real_captains(df, captain_lookup_df)
+
+    captain_summary_df = generate_captain_metrics(df)
+
+    captain_df = generate_captain_metrics(df)
 
     print("\nCaptain analytics generated:")
-    print(len(captain_df))
+    print(len(captain_summary_df))
 
     print("\n===================================")
-    print(captain_df)
+    print(captain_summary_df)
     print("===================================\n")
 
-    save_results(captain_df)
+    save_results(captain_summary_df)
 
     print("\n===================================")
     print(" CAPTAIN ANALYZER COMPLETE ")

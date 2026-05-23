@@ -59,19 +59,17 @@ def detect_consecutive_boundaries(df):
             # Pressure trigger
             if consecutive_count >= 3:
 
-                pressure_events.append({
-                    "match_id": match_id,
-                    "innings": innings,
-                    "over": current_ball["over"],
-                    "ball": current_ball["ball"],
-                    "pressure_type": "Consecutive Boundaries",
+                event = current_ball.to_dict()
 
-                    "batting_team": current_ball["batting_team"],
-                    "bowler": current_ball["bowler"],
-                    "batter": current_ball["batter"],
+                event["pressure_type"] = (
+                    "Consecutive Boundaries"
+                )
 
-                    "runs": current_ball["total_runs"]
-                })
+                event["runs"] = (
+                    current_ball["total_runs"]
+                )
+
+                pressure_events.append(event)
 
     return pressure_events
 
@@ -96,19 +94,17 @@ def detect_powerplay_wickets(df):
 
     for _, row in wickets.iterrows():
 
-        pressure_events.append({
-            "match_id": row["match_id"],
-            "innings": row["innings"],
-            "over": row["over"],
-            "ball": row["ball"],
-            "pressure_type": "Powerplay Wicket",
+        event = row.to_dict()
 
-            "batting_team": row["batting_team"],
-            "bowler": row["bowler"],
-            "batter": row["batter"],
+        event["pressure_type"] = (
+            "Powerplay Wicket"
+        )
 
-            "runs": row["total_runs"]
-        })
+        event["runs"] = (
+            row["total_runs"]
+        )
+
+        pressure_events.append(event)
 
     return pressure_events
 
@@ -144,19 +140,15 @@ def detect_death_over_pressure(df):
             # High scoring pressure
             if total_runs >= 15:
 
-                pressure_events.append({
-                    "match_id": match_id,
-                    "innings": innings,
-                    "over": row["over"],
-                    "ball": row["ball"],
-                    "pressure_type": "Death Over Acceleration",
+                event = row.to_dict()
 
-                    "batting_team": row["batting_team"],
-                    "bowler": row["bowler"],
-                    "batter": row["batter"],
+                event["pressure_type"] = (
+                    "Death Over Acceleration"
+                )
 
-                    "runs": total_runs
-                })
+                event["runs"] = total_runs
+
+                pressure_events.append(event)
 
                 # Reset counter
                 total_runs = 0
@@ -206,19 +198,17 @@ def detect_batting_collapse(df):
 
                 wicket_row = group.iloc[current_idx]
 
-                pressure_events.append({
-                    "match_id": match_id,
-                    "innings": innings,
-                    "over": wicket_row["over"],
-                    "ball": wicket_row["ball"],
-                    "pressure_type": "Batting Collapse",
+                event = wicket_row.to_dict()
 
-                    "batting_team": wicket_row["batting_team"],
-                    "bowler": wicket_row["bowler"],
-                    "batter": wicket_row["batter"],
+                event["pressure_type"] = (
+                    "Batting Collapse"
+)
+                
+                event["runs"] = (
+                    wicket_row["total_runs"]
+                )
 
-                    "runs": wicket_row["total_runs"]
-                })
+                pressure_events.append(event)
 
     return pressure_events
 

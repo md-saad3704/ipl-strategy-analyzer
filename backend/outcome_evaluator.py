@@ -205,42 +205,25 @@ def process_outcomes(
         # Store final result
         # =============================================
 
-        final_rows.append({
+        final_row = decision.to_dict()
 
-            "match_id": match_id,
+        final_row[
+            "runs_conceded_next_over"
+        ] = outcome["runs_conceded"]
 
-            "innings": innings,
+        final_row[
+            "wickets_next_over"
+        ] = outcome["wickets_taken"]
 
-            "over": over,
-            "ball": decision["ball"],
+        final_row[
+            "decision_success"
+        ] = outcome["success"]
 
-            "pressure_type":
-                decision["pressure_type"],
+        final_row[
+            "aggression_index"
+        ] = aggression_index
 
-            "bowler":
-                decision["bowler"],
-
-            "decision":
-                decision["decision"],
-
-            "strategic_decision":
-                strategic_decision,
-
-            "phase":
-                decision["phase"],
-
-            "runs_conceded_next_over":
-                outcome["runs_conceded"],
-
-            "wickets_next_over":
-                outcome["wickets_taken"],
-
-            "decision_success":
-                outcome["success"],
-
-            "aggression_index":
-                aggression_index
-        })
+        final_rows.append(final_row)
 
     final_df = pd.DataFrame(
         final_rows

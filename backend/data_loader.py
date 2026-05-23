@@ -32,6 +32,36 @@ def parse_match(match_path):
 
     teams = info.get("teams", [])
 
+    # =====================================================
+    # ADVANCED MATCH METADATA
+    # =====================================================
+
+    season = info.get("season", "Unknown")
+
+    team1 = teams[0] if len(teams) > 0 else "Unknown"
+
+    team2 = teams[1] if len(teams) > 1 else "Unknown"
+
+    # Toss information
+
+    toss_info = info.get("toss", {})
+
+    toss_winner = toss_info.get("winner", "Unknown")
+
+    toss_decision = toss_info.get("decision", "Unknown")
+
+    # Match outcome
+
+    outcome = info.get("outcome", {})
+
+    winner = outcome.get("winner", "No Result")
+
+    # Player of match
+
+    pom_list = info.get("player_of_match", [])
+
+    player_of_match = pom_list[0] if len(pom_list) > 0 else "Unknown"
+
     innings_data = match_data.get("innings", [])
 
     rows = []
@@ -115,37 +145,36 @@ def parse_match(match_path):
 
                 row = {
                     "match_id": match_id,
+                    "season": season,
+                    "team1": team1,
+                    "team2": team2,
+                    "toss_winner": toss_winner,
+                    "toss_decision": toss_decision,
+                    "winner": winner,
+                    "player_of_match": player_of_match,
                     "date": match_date,
                     "venue": venue,
                     "city": city,
-
                     "innings": innings_number,
                     "batting_team": batting_team,
-
                     "over": over_number,
                     "ball": ball_index,
                     "ball_id": ball_id,
-
                     "batter": batter,
                     "bowler": bowler,
                     "non_striker": non_striker,
-
                     "runs_off_bat": batter_runs,
                     "extras": extras_runs,
                     "total_runs": total_runs,
-
                     "wides": wides,
                     "noballs": noballs,
                     "byes": byes,
                     "legbyes": legbyes,
-
                     "is_boundary": is_boundary,
-
                     "is_wicket": wicket,
                     "wicket_type": wicket_type,
                     "player_dismissed": player_out,
-
-                    "phase": phase
+                    "phase": phase,
                 }
 
                 rows.append(row)
@@ -158,10 +187,7 @@ def load_all_matches():
     Load all IPL JSON files.
     """
 
-    files = [
-        file for file in os.listdir(DATA_FOLDER)
-        if file.endswith(".json")
-    ]
+    files = [file for file in os.listdir(DATA_FOLDER) if file.endswith(".json")]
 
     print(f"\nFound {len(files)} JSON files\n")
 
@@ -210,9 +236,7 @@ def main():
     print("\nTotal Deliveries Loaded:", len(df))
 
     # Sort properly
-    df = df.sort_values(
-        by=["match_id", "innings", "over", "ball"]
-    )
+    df = df.sort_values(by=["match_id", "innings", "over", "ball"])
 
     save_dataset(df)
 

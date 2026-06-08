@@ -20,11 +20,15 @@ DATA_FILE = "processed/final_outcomes.csv"
 
 CAPTAIN_FILE = "processed/captain_summary.csv"
 
+PRESSURE_FILE = "processed/pressure_moments.csv"
+
 try:
 
     df = pd.read_csv(DATA_FILE)
 
     captain_df = pd.read_csv(CAPTAIN_FILE)
+
+    pressure_df = pd.read_csv(PRESSURE_FILE)
 
     print("\n===================================")
     print(" FINAL OUTCOMES DATA LOADED ")
@@ -147,18 +151,6 @@ def strategy_analysis():
 # =========================================================
 
 
-@app.route("/api/aggression-analysis")
-def aggression_analysis():
-
-    grouped = df.groupby("strategic_decision")["aggression_index"].mean().reset_index()
-
-    grouped["aggression_index"] = grouped["aggression_index"].round(2)
-
-    data = grouped.to_dict(orient="records")
-
-    return jsonify(data)
-
-
 # =========================================================
 # SUCCESS RATE BY STRATEGY
 # =========================================================
@@ -201,9 +193,6 @@ def timeline_data():
     data = timeline.to_dict(orient="records")
 
     return jsonify(data)
-
-
-
 
 
 # =========================================================
@@ -257,6 +246,76 @@ def captain_profile(name):
     data = captain.to_dict(orient="records")[0]
 
     return jsonify(data)
+
+
+# =========================================================
+# EXECUTIVE SUMMARY
+# =========================================================
+
+
+@app.route("/api/executive-summary")
+def executive_summary():
+
+    valid_captains = captain_df[captain_df["captain"].notna()]
+
+    # Most Successful Captain
+
+    most_successful = valid_captains.sort_values(
+        by="success_rate", ascending=False
+    ).iloc[0]
+
+    # Best Pressure Handler
+
+    best_handler = valid_captains.sort_values(
+        by="successful_decisions", ascending=False
+    ).iloc[0]
+
+    # Most Pressure Situations
+
+    pressure_leader = valid_captains.sort_values(
+        by="total_decisions", ascending=False
+    ).iloc[0]
+
+    # Total Pressure Events
+
+    total_pressure_events = len(pressure_df)
+
+    # Most Common Pressure Event
+
+    common_pressure = (
+    pressure_df["pressure_type"]
+    .value_counts()
+    .reset_index(name="count")
+)
+
+    common_pressure.columns = [
+        "pressure_type",
+        "count"
+]
+
+    most_common_event = common_pressure.iloc[0]
+
+    return jsonify(
+        {
+            "most_successful_captain": {
+                "captain": most_successful["captain"],
+                "success_rate": round(most_successful["success_rate"], 2),
+            },
+            "best_pressure_handler": {
+                "captain": best_handler["captain"],
+                "successful_responses": int(best_handler["successful_decisions"]),
+            },
+            "most_pressure_situations": {
+                "captain": pressure_leader["captain"],
+                "total_responses": int(pressure_leader["total_decisions"]),
+            },
+            "total_pressure_events": int(total_pressure_events),
+            "most_common_pressure_event": {
+                "type": most_common_event["pressure_type"],
+                "count": int(most_common_event["count"]),
+            },
+        }
+    )
 
 
 # =========================================================

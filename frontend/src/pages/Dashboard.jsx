@@ -21,7 +21,6 @@ import { motion } from "framer-motion";
 import {
     Trophy,
     ShieldCheck,
-    Flame,
     Activity,
     BrainCircuit,
     Radar,
@@ -56,6 +55,11 @@ function Dashboard() {
 
     const [captains, setCaptains] =
         useState([]);
+
+    const [
+        executiveSummary,
+        setExecutiveSummary
+    ] = useState(null);
     // =====================================================
     // FETCH DATA
     // =====================================================
@@ -69,8 +73,13 @@ function Dashboard() {
         fetchStrategyAnalysis();
 
         fetchTimeline();
+
         fetchCaptainComparison();
+
         fetchCaptains();
+
+        fetchExecutiveSummary();
+
     }, []);
 
     // =====================================================
@@ -182,6 +191,27 @@ function Dashboard() {
             }
         };
 
+    const fetchExecutiveSummary =
+        async () => {
+
+            try {
+
+                const response =
+                    await axios.get(
+                        "http://127.0.0.1:5000/api/executive-summary"
+                    );
+
+                setExecutiveSummary(
+                    response.data
+                );
+
+            } catch (error) {
+
+                console.error(error);
+            }
+        };
+
+
     // =====================================================
     // UI
     // =====================================================
@@ -267,26 +297,97 @@ function Dashboard() {
 
                 </div>
 
-                <div
-                    className="
-            bg-gradient-to-r
-            from-yellow-400
-            to-yellow-600
-            text-black
-            px-6
-            py-4
-            rounded-2xl
-            font-bold
-            shadow-2xl
-            text-lg
-          "
-                >
-
-                    LIVE MATCH INTELLIGENCE
-
-                </div>
+                
 
             </motion.div>
+
+
+
+            {
+                executiveSummary && (
+
+                    <div
+                        className="
+                grid
+                grid-cols-1
+                md:grid-cols-2
+                xl:grid-cols-5
+                gap-6
+                mt-12
+            "
+                    >
+
+                        <SummaryCard
+                            title="Most Successful Captain"
+                            value={
+                                executiveSummary
+                                    .most_successful_captain
+                                    .captain
+                            }
+                            stat={
+                                executiveSummary
+                                    .most_successful_captain
+                                    .success_rate + "% Success Rate"
+                            }
+                        />
+
+                        <SummaryCard
+                            title="Best Pressure Handler"
+                            value={
+                                executiveSummary
+                                    .best_pressure_handler
+                                    .captain
+                            }
+                            stat={
+                                executiveSummary
+                                    .best_pressure_handler
+                                    .successful_responses +
+                                " Successful Responses"
+                            }
+                        />
+
+                        <SummaryCard
+                            title="Most Pressure Situations"
+                            value={
+                                executiveSummary
+                                    .most_pressure_situations
+                                    .captain
+                            }
+                            stat={
+                                executiveSummary
+                                    .most_pressure_situations
+                                    .total_responses +
+                                " Responses"
+                            }
+                        />
+
+                        <SummaryCard
+                            title="Total Pressure Events"
+                            value={
+                                executiveSummary
+                                    .total_pressure_events
+                            }
+                            stat="Detected Across IPL Matches"
+                        />
+
+                        <SummaryCard
+                            title="Most Common Pressure Event"
+                            value={
+                                executiveSummary
+                                    .most_common_pressure_event
+                                    .type
+                            }
+                            stat={
+                                executiveSummary
+                                    .most_common_pressure_event
+                                    .count +
+                                " Occurrences"
+                            }
+                        />
+
+                    </div>
+                )
+            }
 
             {/* ============================================= */}
             {/* METRIC CARDS */}
@@ -307,10 +408,11 @@ function Dashboard() {
                     >
 
                         <MetricCard
-                            title="Total Tactical Decisions"
+                            title="Pressure Responses Analyzed"
+                            subtitle="Tactical responses detected after pressure situations"
                             value={metrics.total_decisions}
                             icon={<Trophy size={32} />}
-                            subtitle="All detected captain decisions"
+
                         />
 
                         <MetricCard
@@ -327,16 +429,59 @@ function Dashboard() {
                             subtitle="Positive captaincy responses"
                         />
 
-                        <MetricCard
-                            title="Aggression Index"
-                            value={metrics.average_aggression}
-                            icon={<Flame size={32} />}
-                            subtitle="Captain tactical aggression"
-                        />
-
                     </div>
                 )
             }
+
+
+            {/* ============================================= */}
+            {/* Understanding The Metrics*/}
+            {/* ============================================= */}
+
+
+            <div
+                className="
+        mt-12
+        bg-white/5
+        border
+        border-green-900
+        rounded-3xl
+        p-8
+    "
+            >
+
+                <h2
+                    className="
+            text-3xl
+            font-bold
+            text-yellow-400
+            mb-6
+        "
+                >
+                    Understanding The Metrics
+                </h2>
+
+                <div className="space-y-4 text-green-100">
+
+                    <p>
+                        <strong>Pressure Response: </strong>
+                        A tactical action identified after a pressure situation such as consecutive boundaries, batting collapse, powerplay wicket, or death-over acceleration.
+                    </p>
+
+                    <p>
+                        <strong>Tactical Success Rate: </strong>
+                        A response is considered successful if the next over either takes a wicket or concedes 6 runs or fewer.
+                    </p>
+
+                    <p>
+                        <strong>Pressure Events: </strong>
+                        Detected from real IPL ball-by-ball data and grouped into different pressure categories.
+                    </p>
+
+                </div>
+
+            </div>
+
 
             {/* ============================================= */}
             {/* INSIGHT PANELS */}
@@ -384,6 +529,55 @@ function Dashboard() {
 
             </div>
 
+
+            {/* ============================================= */}
+            {/* Key Insights */}
+            {/* ============================================= */}
+
+            <div
+                className="
+        mt-14
+        bg-white/5
+        border
+        border-green-900
+        rounded-3xl
+        p-8
+    "
+            >
+
+                <h2
+                    className="
+            text-3xl
+            font-bold
+            text-yellow-400
+            mb-6
+        "
+                >
+                    Key IPL Insights
+                </h2>
+
+                <div className="space-y-4 text-green-100">
+
+                    <p>
+                        • Pressure responses are generated whenever a tactical reaction follows a detected pressure event.
+                    </p>
+
+                    <p>
+                        • Tactical success is determined by wicket-taking ability or run containment in the next over.
+                    </p>
+
+                    <p>
+                        • Pressure events include consecutive boundaries, batting collapses, powerplay wickets and death-over acceleration.
+                    </p>
+
+                    <p>
+                        • Aggression scores reflect how attacking or defensive a captain's tactical response was.
+                    </p>
+
+                </div>
+
+            </div>
+
             {/* ============================================= */}
             {/* CHARTS */}
             {/* ============================================= */}
@@ -401,8 +595,17 @@ function Dashboard() {
                 {/* Pressure Chart */}
 
                 <ChartContainer
-                    title="Pressure Moments Distribution"
+                    title="IPL Pressure Event Breakdown"
                 >
+
+                    <p
+                        className="
+        text-green-100
+        mb-6
+    "
+                    >
+                        Frequency of pressure situations detected across all analyzed IPL matches.
+                    </p>
 
                     <ResponsiveContainer
                         width="100%"
@@ -440,8 +643,17 @@ function Dashboard() {
                 {/* Strategy Pie */}
 
                 <ChartContainer
-                    title="Strategic Decision Breakdown"
+                    title="Captain Tactical Responses"
                 >
+
+                    <p
+                        className="
+        text-green-100
+        mb-6
+    "
+                    >
+                        Shows how captains reacted after pressure situations were detected.
+                    </p>
 
                     <ResponsiveContainer
                         width="100%"
@@ -491,151 +703,11 @@ function Dashboard() {
             </div>
 
 
-            {/* =======================================================
-            METRIC CARD
-            ======================================================= */}
-            <div
-                className="
-                mt-14
-                bg-white/5
-                backdrop-blur-lg
-                border
-                border-green-900
-                rounded-3xl
-                p-8
-                shadow-2xl
-                "
-                >
+           
 
-                <h2
-                    className="
-            text-3xl
-            font-bold
-            text-yellow-400
-            mb-8
-          "
-                >
 
-                    Tactical Timeline Events
 
-                </h2>
 
-                <div className="overflow-x-auto">
-
-                    <table
-                        className="
-              w-full
-              border-collapse
-            "
-                    >
-
-                        <thead>
-
-                            <tr
-                                className="
-                  text-left
-                  border-b
-                  border-green-800
-                "
-                            >
-
-                                <th className="pb-4">
-                                    Match
-                                </th>
-
-                                <th className="pb-4">
-                                    Over
-                                </th>
-
-                                <th className="pb-4">
-                                    Pressure Type
-                                </th>
-
-                                <th className="pb-4">
-                                    Strategy
-                                </th>
-
-                                <th className="pb-4">
-                                    Outcome
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            {
-                                timelineData.map(
-                                    (event, index) => (
-
-                                        <tr
-                                            key={index}
-                                            className="
-                        border-b
-                        border-green-950
-                        hover:bg-green-950/30
-                      "
-                                        >
-
-                                            <td className="py-4">
-                                                {event.match_id}
-                                            </td>
-
-                                            <td>
-                                                {event.over}.{event.ball}
-                                            </td>
-
-                                            <td>
-                                                {event.pressure_type}
-                                            </td>
-
-                                            <td>
-                                                {
-                                                    event.strategic_decision
-                                                }
-                                            </td>
-
-                                            <td>
-
-                                                <span
-                                                    className={`
-                            px-3
-                            py-1
-                            rounded-full
-                            text-sm
-                            font-bold
-
-                            ${event.decision_success
-                                                            === "Successful"
-
-                                                            ? "bg-green-600"
-
-                                                            : "bg-red-600"
-                                                        }
-                          `}
-                                                >
-
-                                                    {
-                                                        event.decision_success
-                                                    }
-
-                                                </span>
-
-                                            </td>
-
-                                        </tr>
-                                    )
-                                )
-                            }
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </div>
 
         </div>
     );
@@ -867,6 +939,68 @@ function CaptainStat({
         </div>
     );
 }
+
+function SummaryCard({
+    title,
+    value,
+    stat
+}) {
+
+    return (
+
+        <motion.div
+
+            whileHover={{
+                scale: 1.03,
+                y: -4
+            }}
+
+            className="
+                bg-gradient-to-br
+                from-[#0B2A1E]
+                to-[#113D2C]
+                border
+                border-green-800
+                rounded-3xl
+                p-6
+                shadow-2xl
+            "
+        >
+
+            <p
+                className="
+                    text-green-200
+                    text-sm
+                "
+            >
+                {title}
+            </p>
+
+            <h2
+                className="
+                    mt-3
+                    text-xl
+                    font-black
+                    text-yellow-400
+                "
+            >
+                {value}
+            </h2>
+
+            <p
+                className="
+                    mt-3
+                    text-green-300
+                    text-sm
+                "
+            >
+                {stat}
+            </p>
+
+        </motion.div>
+    );
+}
+
 
 function ChartContainer({
     title,
